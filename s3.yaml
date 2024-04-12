@@ -1,0 +1,41 @@
+apiVersion: storage.aws.crossplane.io/v1alpha3
+kind: S3Bucket
+metadata:
+  name: nashtech-s3bucket
+  labels:
+    resource: S3
+spec:
+  forProvider:
+    acl: private
+    bucketName: Nashtech-crossplane
+    versioning:
+      enabled: true
+    lifecycleConfiguration:
+      rules:
+      - id: logs
+        prefix: logs/
+        status: Enabled
+        expirationInDays: 7
+    loggingConfiguration:
+      destinationBucketName: logs-bucket-crossplane
+      logFilePrefix: logs/
+    serverSideEncryptionConfiguration:
+      kmsMasterKeyID: <Enter your KMS arn>
+      sseAlgorithm: aws:kms
+    tags:
+    - key: Name
+      value: Nashtech-crossplane
+    corsConfiguration:
+      corsRules:
+      - allowedHeaders:
+        - "*"
+        allowedMethods:
+        - GET
+        - POST
+        - PUT
+        allowedOrigins:
+        - "*"
+        exposeHeaders:
+        - "ETag"
+        maxAgeSeconds: 300
+  deletionPolicy: Delete
